@@ -1,155 +1,334 @@
-/* Border box declaration 
-https://www.paulirish.com/2012/box-sizing-border-box-ftw/ */
+/* =============================================================
+   Border-box reset
+   https://www.paulirish.com/2012/box-sizing-border-box-ftw/
+   ============================================================= */
 html {
   box-sizing: border-box;
 }
-*, 
-*:before, 
-*:after {
+*, *:before, *:after {
   box-sizing: inherit;
 }
 
+/* =============================================================
+   BASE STYLES
+   ============================================================= */
 body {
   font-family: Arial, Geneva, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
 }
 
 a {
   color: #2772B0;
 }
 
+/* Site header */
+.site-header {
+  background-color: #222;
+  color: #fff;
+  text-align: center;
+  padding: 1.5rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.site-header h1 {
+  margin: 0 0 0.25rem;
+  font-size: 2rem;
+  letter-spacing: 2px;
+}
+
+.site-header p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #bbb;
+}
+
+/* =============================================================
+   WRAPPER — the grid container (lecture slide 6)
+   "Wrapper going around the cells (container)"
+   display: grid turns on CSS Grid for this element.
+   gap: adds space between grid cells (was grid-gap, slide 6).
+   ============================================================= */
 .wrapper {
+  display: grid;
+  gap: 10px;                 /* lecture: grid-gap: 10px (now just gap) */
   width: 97%;
-  max-width: 1200px;
-  margin: 0 auto;
-  float: none;
-  background-color: #fff;
+  max-width: 100%;
+  margin: 0 auto 1.5rem auto;
 }
 
-div img {
-  width: 100%;
-  max-width: 225px;
+/* =============================================================
+   SHARED ARTICLE STYLES
+   ============================================================= */
+article {
+  padding: 1rem;
+  border: 1px solid #ccc;
+  overflow: hidden;
 }
 
-/* ============================================
-   GRID SYSTEM — Mobile First
-   ============================================ */
+/* Images fill the card width, with consistent height */
+article img {
+  width: 250px;
+  max-width: 100%;
+  height: auto;
 
-/* Flex container */
-.row {
-  display: flex;
-  flex-flow: row wrap;
+  /* NEW PROPERTY — object-position: top
+     Works with object-fit to control which part of the image
+     is visible when it gets cropped. "top" keeps the top of
+     the poster (faces/titles) in frame instead of centering. */
+  object-position: top;
+  display: block;
+  margin-bottom: 0.5rem;
 }
 
-/* All columns: full width on mobile, with left margin */
-[class*="col-"] {
-  margin-left: 4%;
-  flex: 0 0 92%; /* full width minus margin on mobile */
+article h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
 }
 
-/* ============================================
-   BACKGROUND COLORS
-   ============================================ */
-.col-1 { background-color: #A3CDD9; }
-.col-2 { background-color: #FFFCE6; }
-.col-3 { background-color: #D4EDDA; }  /* light green for the wide column */
-.col-4 { background-color: #F5E6FF; }  /* light purple for full-width row */
+article p {
+  font-size: 0.875rem;
+  margin: 0 0 0.5rem;
+}
 
-/* Row 6 unique color */
-.col-auto { background-color: #FFE8CC; } /* light orange */
+/* =============================================================
+   BACKGROUND COLORS — one per section
+   ============================================================= */
+.row-1 article { background-color: #A3CDD9; }
+.row-2 article { background-color: #FFFCE6; }
+.row-3 .box-3a { background-color: #A3CDD9; }
+.row-3 .box-3b { background-color: #D4EDDA; }
+.row-4 article { background-color: #F5E6FF; }
+.row-5 .box-5a { background-color: #FFE8CC; }
+.row-5 .box-5b { background-color: #FFFCE6; }
+.row-5 .box-5c { background-color: #FFE8CC; }
+.row-6 article { background-color: #D4EDDA; }
 
 
-/* ============================================
+/* =============================================================
+   MOBILE FIRST — single column on all rows
+   All items default to 1 column wide on small screens.
+   ============================================================= */
+
+/* Row 1 — 4 items, each takes 1 column on mobile */
+.row-1 {
+  grid-template-columns: 1fr;
+}
+
+/* Row 2 — 2 items stacked */
+.row-2 {
+  grid-template-columns: 1fr;
+}
+
+/* Row 3 — 2 items stacked */
+.row-3 {
+  grid-template-columns: 1fr;
+}
+
+/* Row 4 — 1 item, full width */
+.row-4 {
+  grid-template-columns: 1fr;
+}
+
+/* Row 5 — 3 items stacked; center card moves first via order */
+.row-5 {
+  grid-template-columns: 1fr;
+}
+
+/*
+  ORDER property (lecture slide 10 — layout reordering with grid):
+  On mobile and tablet, we want End of Watch (box-5b) to appear
+  FIRST even though it is second in the HTML.
+  order: -1 makes it render before siblings with the default order: 0.
+*/
+.box-5b {
+  order: -1;  /* End of Watch floats to the top on mobile/tablet */
+}
+
+/* Row 6 — 5 items stacked on mobile */
+.row-6 {
+  /*
+    NEW PROPERTY — repeat() with auto-fill and minmax():
+    repeat(auto-fill, minmax(160px, 1fr)) tells the browser to
+    create as many columns as will fit, each at minimum 160px
+    and at most 1fr (equal share of remaining space).
+    This means the 5 cards automatically reflow from 1 column
+    on mobile up to 5 columns on wide screens — with no extra
+    media queries needed just for this row!
+
+    auto-fill: keeps creating column slots even if they're empty.
+    minmax(160px, 1fr): each column is at least 160px wide.
+  */
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+}
+
+
+/* =============================================================
    TABLET — min-width: 480px
-   ============================================ */
+   ============================================================= */
 @media only screen and (min-width: 480px) {
 
-  /* Row 1: 2 columns per row on tablet */
-  .col-1 {
-    flex: 0 0 44%;
+  /* Row 1: 2 columns — items auto-place 2 per row */
+  .row-1 {
+    grid-template-columns: 1fr 1fr;
   }
 
-  /* Row 2: 2 columns per row on tablet */
-  .col-2 {
-    flex: 0 0 44%;
+  /* Row 2: 2 columns side by side */
+  .row-2 {
+    grid-template-columns: 1fr 1fr;
   }
 
-  /* Row 3: both items stack full width on tablet */
-  .col-3 {
-    flex: 0 0 44%;
+  /* Row 3: both items side by side on tablet */
+  .row-3 {
+    grid-template-columns: 1fr 1fr;
   }
 
-  /* Row 4: full width on tablet */
-  .col-4 {
-    flex: 0 0 92%;
+  /* Row 4: stays full width */
+  .row-4 {
+    grid-template-columns: 1fr;
   }
 
-  /* Row 6: 2 per row on tablet */
-  .col-auto {
-    flex: 0 0 44%;
+  /* Row 5: 2-column grid on tablet, center card spans full width */
+  .row-5 {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /*
+    On tablet, box-5b still has order: -1 so it appears first.
+    We also give it grid-column: 1 / 3 (spans both columns)
+    so it fills the whole top row before the two side cards
+    drop below it.
+    (lecture: grid-column uses start-line / end-line syntax)
+  */
+  .box-5b {
+    order: -1;
+    grid-column: 1 / 3;   /* spans from line 1 to line 3 = full width */
   }
 
 }
 
 
-/* ============================================
+/* =============================================================
    DESKTOP — min-width: 768px
-   ============================================ */
+   This is where lecture-style grid-column line numbers apply.
+   (Lecture slide 8: grid-column: 1 / 2, 2 / 3, 3 / 4 etc.)
+   ============================================================= */
 @media only screen and (min-width: 768px) {
 
-  /* Row 1: 4 equal columns 
-     4 items * 20% + 4 margins * 4% = 80% + 16% = 96% ✓ */
-  .col-1 {
-    flex: 0 0 20%;
+  /* ----------------------------------------------------------
+     ROW 1: 4 equal columns
+     grid-template-columns defines 4 tracks of equal width (1fr).
+     (Lecture slide 6 diagram shows 4 equal cells in a wrapper.)
+     Each item takes 1 column. The browser auto-places them left
+     to right since we don't need to override grid-column here.
+  ---------------------------------------------------------- */
+  .row-1 {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
   }
 
-  /* Row 2: 2 items, each taking ~44% 
-     2 * 44% + 2 * 4% = 96% ✓ */
-  .col-2 {
-    flex: 0 0 44%;
+  /* Explicit line numbers for Row 1 cells (lecture slide 8 style)
+     col-1 = line 1 to 2, col-2 = line 2 to 3, etc. */
+  .box-1a { grid-column: 1 / 2; grid-row: 1/3;}
+  .box-1b { grid-column: 2 / 3; grid-row: 1/3;}
+  .box-1c { grid-column: 3 / 6; grid-row: 1/2;}
+  .box-1d { grid-column: 3 / 6; grid-row: 2/3;}
+
+
+  /* ----------------------------------------------------------
+     ROW 2: 2 cards each spanning 2 columns
+     4-column grid, box-2a covers lines 1–3, box-2b covers 3–5.
+     (Lecture slide 8: different cells get different column spans.)
+  ---------------------------------------------------------- */
+  .row-2 {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
   }
 
-  /* Row 3: col-1 (20%) + col-3 (68%) = 88% + 2 margins (8%) = 96% ✓ */
-  .col-3 {
-    flex: 0 0 68%;
+  .box-2a { grid-column: 1 / 3; }   /* lines 1 to 3 = 2 columns wide */
+  .box-2b { grid-column: 3 / 5; }   /* lines 3 to 5 = 2 columns wide */
+
+
+  /* ----------------------------------------------------------
+     ROW 3: Asymmetric — 1 col narrow + 3 col wide
+     Demonstrates lecture slide 9's row+column spanning concept.
+     box-3a: grid-column 1/2 (narrow)
+     box-3b: grid-column 2/5 (wide, 3 of the 4 tracks)
+  ---------------------------------------------------------- */
+  .row-3 {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
   }
 
-  /* Row 4: one item, nearly full width */
-  .col-4 {
-    flex: 0 0 92%;
+  .box-3a { grid-column: 1 / 2; }   /* 1 column wide */
+  .box-3b { grid-column: 2 / 5; }   /* 3 columns wide */
+
+
+  /* ----------------------------------------------------------
+     ROW 4: Single full-width item
+     grid-column: 1 / 5 spans all 4 column tracks.
+     (Lecture: "col-4 { grid-column: ? / ? }" — answer is 1/5)
+  ---------------------------------------------------------- */
+  .row-4 {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
   }
 
-  /* Row 5: col-1 (20%) + col-2 (44%) + col-1 (20%) = 84% + 3 margins (12%) = 96% ✓ */
-  /* (order properties handle reordering — see below) */
+  .box-4a {
+    grid-column: 1 / 5;   /* from line 1 all the way to line 5 */
 
-  /* Row 6: 5 equal columns on desktop
-     Using flex-grow instead of fixed flex-basis — items grow to fill space equally.
-     5 items each start at 0 and grow with flex-grow: 1 */
-  .col-auto {
-    flex: 1 1 13%; /* grow equally, base ~13% so 5 fit on one line */
-    min-width: 120px;
+    /*
+      NEW PROPERTY — grid-template-columns on a NESTED grid:
+      The full-width Zodiac card itself becomes a grid container
+      so we can lay out its content (image left, text right).
+      This is a "nested grid" — a grid item that is also a grid
+      container. Not covered in the lecture.
+    */
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 1rem;
+    align-items: start;
   }
 
+  /* Let the image fill its grid cell naturally */
+  .box-4a img {
+    height: 280px;
+    width: 100%;
+    object-fit: cover;
+    object-position: top;
+    margin-bottom: 0;
+  }
+
+  /* Text block wraps title + paragraphs in its own column */
+  .box-4a .text-block {
+    display: grid;
+    align-content: start;
+    gap: 0.5rem;
+  }
+
+
+  /* ----------------------------------------------------------
+     ROW 5: 1 col + 2 col + 1 col with order restored
+     (Lecture slide 10 — layout reordering with grid)
+     On desktop, order is reset to 0 so natural HTML order applies.
+  ---------------------------------------------------------- */
+  .row-5 {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+
+  .box-5a { grid-column: 1 / 2; order: 0; }   /* left  — 1 column */
+  .box-5b { grid-column: 2 / 4; order: 0; }   /* center — 2 columns */
+  .box-5c { grid-column: 4 / 5; order: 0; }   /* right — 1 column */
+
+
+  /* ----------------------------------------------------------
+     ROW 6: 5 equal columns on desktop
+     auto-fill + minmax already handles this automatically.
+     The min-width of 160px means all 5 fit on one row at 768px+.
+     No extra rule needed — the mobile declaration handles it.
+  ---------------------------------------------------------- */
+
+}
+.row-1,
+.row-6 {
+  grid-template-columns: repeat(5, 1fr);
 }
 
 
-/* ============================================
-   ROW 5 — ORDER PROPERTY
-   On desktop: left(col-1) | middle(col-2) | right(col-1)
-   On tablet/mobile: middle item (Remy) appears FIRST
-   We use the CSS `order` property to achieve this.
-   ============================================ */
-
-/* Mobile & tablet: reorder so middle col-2 shows first */
-.order-middle {
-  order: -1; /* appears before the two side items */
-}
-
-/* Desktop: restore natural order */
-@media only screen and (min-width: 768px) {
-  .order-middle {
-    order: 0;
-  }
-  .order-side {
-    order: 0;
-  }
-}
